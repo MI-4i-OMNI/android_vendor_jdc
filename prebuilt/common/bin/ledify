@@ -61,12 +61,28 @@
 
 # Brightness
 BRG=echo #value
-# Color channel sysfs
-LED_B=/sys/class/leds/led_b/brightness
-LED_G=/sys/class/leds/led_g/brightness
-LED_R=/sys/class/leds/led_r/brightness
-# Samsung stock LED pattern
-LED_SEC=/sys/devices/virtual/sec/led/led_pattern
+# Get device model
+DEVICE=`cat /system/build.prop | grep -o 'ro.build.product=[^\ ]*'`
+
+# Set RGB LED paths
+if [ "$DEVICE" == "ro.build.product=jflte" ]; then
+    # Color channel sysfs
+    LED_B=/sys/class/leds/led_b/brightness
+    LED_G=/sys/class/leds/led_g/brightness
+    LED_R=/sys/class/leds/led_r/brightness
+    # Samsung stock LED pattern
+    LED_SEC=/sys/devices/virtual/sec/led/led_pattern
+elif [ "$DEVICE" == "ro.build.product=p1" ]; then
+    # Color channel sysfs
+    LED_B=/sys/class/leds/blue/brightness
+    LED_G=/sys/class/leds/green/brightness
+    LED_R=/sys/class/leds/red/brightness
+    # No SEC pattern available
+    LED_SEC=0
+else
+    echo "No compatible device found!"
+    exit 0
+fi
 
 EXIT() {
     # Reset channels
