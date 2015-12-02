@@ -1,10 +1,8 @@
+## JDC JF configuration
+
 # Bootanimation
 PRODUCT_COPY_FILES += \
-    vendor/jdc/prebuilt/common/bootanimation/bootanimation.zip:system/media/bootanimation.zip
-
-# BSOD Killer
-PRODUCT_COPY_FILES += \
-    vendor/jdc/prebuilt/common/bin/bsod_killer:system/bin/bsod_killer
+    vendor/jdc/prebuilt/common/bootanimation/1080/bootanimation.zip:system/media/bootanimation.zip
 
 # Changelog
 PRODUCT_COPY_FILES += \
@@ -22,10 +20,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     vendor/jdc/prebuilt/common/bin/emmc_trim:system/bin/emmc_trim
 
-# For keyboard gesture typing
-PRODUCT_COPY_FILES += \
-    vendor/jdc/prebuilt/common/lib/libjni_latinimegoogle.so:system/lib/libjni_latinimegoogle.so
-
 # LEDify
 PRODUCT_COPY_FILES += \
     vendor/jdc/prebuilt/common/bin/ledify:system/bin/ledify
@@ -36,18 +30,13 @@ PRODUCT_PACKAGE_OVERLAYS += vendor/jdc/overlay/common
 # Packages
 PRODUCT_PACKAGES += \
     SunBeam \
-    STweaks \
-    OTAUpdates
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.ota.romname=Optimized-CM-12.1 \
-    ro.ota.version=$(shell date -u +%Y%m%d) \
-    ro.ota.manifest=https://romhut.com/roms/Optimized-CM-121/ota.xml
+    STweaks
 
 # Prebuilt ConsumerIR
 PRODUCT_COPY_FILES += \
     vendor/jdc/prebuilt/common/lib/hw/consumerir.msm8960.old:system/lib/hw/consumerir.msm8960.old
 
-# Prebuilt Toolbox (if exists)
+# Prebuilt Toolbox
 PRODUCT_COPY_FILES += \
     vendor/jdc/proprietary/Toolbox.apk:system/priv-app/Toolbox/Toolbox.apk
 
