@@ -10,7 +10,8 @@ BUILD() {
     echo
     echo "Building..."
     . build/envsetup.sh
-    lunch aosp_ferrari-userdebug
+    ./vendor/jdc/get-prebuilts
+    lunch cm_ferrari-userdebug
     if [ -n "$LOG" ]; then
         mka -j$CPU otapackage
     else
