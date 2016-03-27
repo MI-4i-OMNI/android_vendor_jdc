@@ -81,83 +81,12 @@ makeclean(){
     fi
 }
 
-buildAlu() {
-    cd "$ALU_DIR"
-    if [ "$(cat $ALU_BUILD | grep "enforcing")" != "" ]; then
-    # Convert to androidboot.selinux
-    sed -i 's/enforcing=0 selinux=1/androidboot.selinux=permissive/' $ALU_BUILD
-    fi
-    ./$ALU_BUILD
     if [ "$?" == 0 ]; then
         echo "Alucard Kernel built, ready to repack"
     else
         echo "Alucard kernel build failure, do not repack"
     fi
     croot
-}
-
-checkRamdisk() {
-    echo "Going to build Alucard kernel, did you update the ramdisk?"
-    select choice in "Yes" "No"; do
-	case $choice in
-	    Yes ) buildAlu; break;;
-	    No ) 
-		if [ "$fullbuild" == "true" ]; then
-		    echo "You chosen to build ROM, kernel and repack but didn't update the ramdisk.\nTo prevent you from building a new kernel image with an old ramdisk I suspended the process.\nPlease update it and resume, I'll wait for you."
-		    echo ""
-		    echo "Are you ready?"
-		    select ready in "Yes" "No"; do
-			case $ready in
-			    Yes ) buildAlu; break;;
-			    No ) echo "Built ROM will not be deleted, once the ramdisk is updated run me again and select option 4 first, then option 5."; sleep 5; exit 0; break;;
-			esac
-		    done
-		else
-		    echo "Make sure you update the ramdisk, then run me again and select option 4." && sleep 5 | exit 0
-		fi; break;;
-	esac
-    done
-}
-
-repackRom() {
-    LATEST=$(ls -t $OUT | grep -v .zip.md5 | grep .zip | head -n 1)
-    TEMP=temp
-    ALU_OUT="$ALU_DIR"/READY-JB
-
-    mkdir "$TEMP"
-    echo "Unpacking ROM to temp folder"
-    unzip -q "$OUT"/"$LATEST" -d"$TEMP"
-    echo "Copying Alucard Kernel"
-    rm -rf "$TEMP"/system/lib/modules/*
-    cp -r "$ALU_OUT"/system/lib/modules "$TEMP"/system/lib/modules
-    cp -r "$ALU_OUT"/system/wget "$TEMP"/system/wget
-    cp "$ALU_OUT"/boot.img "$TEMP"
-
-    cd "$TEMP"
-    echo "Repacking ROM"
-    zip -rq9 ../"$FILENAME".zip *
-    cd ..
-    echo "Creating MD5"
-    md5sum "$FILENAME".zip > "$FILENAME".zip.md5
-    echo "Cleaning up"
-    rm -rf "$TEMP"
-    echo "Done"
-}
-
-flashRom() {
-    echo " "
-    adb root
-    sleep 3
-    echo "pushing ROM file"
-    adb push "$FILENAME".zip /sdcard/"$FILENAME".zip
-    echo "pushing MD5"
-    adb push "$FILENAME".zip.md5 /sdcard/"$FILENAME".zip.md5
-    echo "install /sdcard/$FILENAME.zip" > openrecoveryscript
-    echo "pushing open recovery script"
-    adb remount
-    adb push openrecoveryscript /cache/recovery/openrecoveryscript
-    echo "rebooting phone"
-    adb reboot recovery
 }
 
 anythingElse() {
@@ -191,13 +120,9 @@ select build in "Build ROM" "Sync" "Sync and upstream merge" "Build Alucard Kern
         "Build ROM" ) buildROM; anythingElse; break;;
         "Sync" ) repoSync 1; anythingElse; break;;
         "Sync and upstream merge" ) repoSync 2; anythingElse; break;;
-        "Build Alucard Kernel" ) checkRamdisk; anythingElse; break;;
         "Repack ROM" ) repackRom; anythingElse; break;;
         "Make Clean" ) make clean; anythingElse; break;;
         "Make Clean (inc ccache)" ) makeclean; anythingElse; break;;
-	"Make Clean All (inc ccache+Alucard)" ) aluclean=true; makeclean; anythingElse; break;;
-        "Push and flash" ) flashRom; break;;
-        "Build ROM, Kernel and Repackage"  ) fullbuild=true; buildROM; checkRamdisk; repackRom; anythingElse; break;;
 	"Exit" ) exit 0; break;;
     esac
 done
