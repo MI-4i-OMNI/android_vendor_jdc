@@ -23,10 +23,10 @@
 
 
 TEAM_NAME="JDCTeam"
-TARGET=jflte
+TARGET=ferrari
 VARIANT=userdebug
 CM_VER=13
-ALU_DIR=kernel/samsung/alucard24
+ALU_DIR=kernel/xiaomi/ferrari
 ALU_BUILD=build_kernel.sh
 ALU_CLEAN=clean-all.sh
 FILENAME=OptimizedCM-"$CM_VER"-"$(date +%Y%m%d)"-"$TARGET"
