@@ -81,26 +81,6 @@ makeclean(){
     fi
 }
 
-    if [ "$?" == 0 ]; then
-        echo "Alucard Kernel built, ready to repack"
-    else
-        echo "Alucard kernel build failure, do not repack"
-    fi
-    croot
-}
-
-anythingElse() {
-    echo " "
-    echo " "
-    echo "Anything else?"
-    select more in "Yes" "No"; do
-        case $more in
-            Yes ) bash build.sh; break;;
-            No ) exit 0; break;;
-        esac
-    done ;
-}
-
 echo " "
 echo " "
 echo -e "\e[1;91mWelcome to the $TEAM_NAME build script"
