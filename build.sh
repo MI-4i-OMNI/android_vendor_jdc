@@ -11,12 +11,7 @@ BUILD() {
     echo "Building..."
     . build/envsetup.sh
     ./vendor/jdc/get-prebuilts
-    lunch cm_ferrari-userdebug
-    if [ -n "$LOG" ]; then
-        mka -j$CPU otapackage
-    else
-        mka -j$CPU otapackage &>build.log | tail -f build.log
-    fi
+    brunch cm_ferrari-userdebug
     return
 }
 SYNC() {
